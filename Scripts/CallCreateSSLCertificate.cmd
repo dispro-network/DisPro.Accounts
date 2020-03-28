@@ -31,16 +31,9 @@ ECHO Calling CreateSSLCertificate
 powershell -File CreateSSLCertificate.ps1
 
 REM Copy pfx files into projects
-ECHO Copying pfx files into the DisPro.Accounts and Sample projects
+ECHO Copying pfx files into the DisPro.Accounts
 
 REM DisPro.Accounts
-xcopy /vy ..\certificates\accounts.dispro.network.local.pfx ..\DisPro.Accounts\
-REM dotnet
-xcopy /vy ..\certificates\accounts.dispro.network.local.pfx ..\Samples\dotnet\Api\
-xcopy /vy ..\certificates\accounts.dispro.network.local.pfx ..\Samples\dotnet\MvcClientImplicit\
-xcopy /vy ..\certificates\accounts.dispro.network.local.pfx ..\Samples\dotnet\MvcClientHybrid\
-xcopy /vy ..\certificates\accounts.dispro.network.local.pfx ..\Samples\dotnet\JavaScriptClient\
-REM node
-echo f | xcopy /vy ..\certificates\accounts.dispro.network.local.pem ..\Samples\node\react-client\server.pem
+xcopy /vy ..\certificates\dispro.network.local.pfx ..\DisPro.Accounts\
 
 PAUSE
