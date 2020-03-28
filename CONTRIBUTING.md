@@ -10,9 +10,9 @@ The following is a set of guidelines for contributors.
 
 [Development](#development)
 
-- [Overview](#development-overview)
-- [Development Requirements](#development-development-requirements)
-- [Getting Started](#development-getting-started)
+- [Overview](#overview)
+- [Development Requirements](#development-requirements)
+- [Getting Started](#getting-started)
 - [Forks, Branches, and Pull Requests](#forks-branches-and-pull-requests)
 
 [Additional Notes](#additional-notes)
@@ -146,7 +146,7 @@ Community contributions to DisPro.Accounts require that you first fork this repo
 
 See GitHub documentation about [Collaborating with issues and pull requests](https://help.github.com/categories/collaborating-with-issues-and-pull-requests/) for more information.
 
-> :exclamation: **Note:** _DisPro.Accounts development uses a long-lived `dev` branch for new (non-hotfix) development. Pull Requests should be opened against `dev` in all repositories._
+> :exclamation: **Note:** _DisPro.Accounts development uses a long-lived `dev` branch for new (non-hotfix) development. Pull Requests should be opened against `dev`._
 
 #### Branching Model
 
@@ -172,4 +172,4 @@ For example, a new feature such as a new theme could be created as `feature/new-
 
 Join the chat in our [discord server](https://discord.gg/tGhJRcB). For general dev discussion relating to any DisPro project head over to the [dev-general](https://discord.gg/h6zvquc) channel. For dev discussion relating speficically to Dispro.Accounts, head over to [dev-dispro-accounts](https://discord.gg/eCRNMDd).
 
-Thank you again for all your support, encouragement and effort! :heart:
+**Thank you again for all your support, encouragement and effort!** :heart:
