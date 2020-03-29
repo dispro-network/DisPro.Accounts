@@ -110,7 +110,7 @@ Create an appsettings.Development.json file which is a .gitignored file that con
   },
   "CertificateSettings": {
     "Filename": "dispro.network.local.pfx",
-    "Password": "SuperSecretPasswor"
+    "Password": "SuperSecretPassword"
   }
 }
 
