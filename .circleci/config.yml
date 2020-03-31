@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t $IMAGE_NAME:latest ./DisPro.Accounts/
+            docker build -t $IMAGE_NAME:latest -f ./DisPro.Accounts/Dockerfile .
       - run:
           name: Push Docker Image
           command: |
