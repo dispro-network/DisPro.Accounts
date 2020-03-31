@@ -65,10 +65,6 @@ namespace DisPro.Accounts
             var connectionStrings = config.GetSection("ConnectionStrings");
             string serilogConnectionString = connectionStrings.GetValue<string>("SerilogConnection");
 
-#pragma warning disable IDE0067 // Dispose objects before losing scope. If disposed here, application will fail
-            var certificate = new X509Certificate2(certificateFile, certificatePassword);
-#pragma warning restore IDE0067 // Dispose objects before losing scope. If disposed here, application will fail
-
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -77,7 +73,13 @@ namespace DisPro.Accounts
                         options.Listen(IPAddress.Loopback, 5000); // This port is required for https redirection
                         options.Listen(IPAddress.Loopback, 5001, listenOptions =>
                         {
+#if DEBUG
+#pragma warning disable IDE0067 // Dispose objects before losing scope. If disposed here, application will fail
+                            var certificate = new X509Certificate2(certificateFile, certificatePassword);
+#pragma warning restore IDE0067 // Dispose objects before losing scope. If disposed here, application will fail
                             listenOptions.UseHttps(certificate);
+#endif
+
                         });
                     });
                     webBuilder.UseStartup<Startup>();
