@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: DisPro.Accounts
+  namespace: default
+  labels:
+    app: DisPro.Accounts
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: http
+      name: http
+  selector:
+    app: DisPro.Accounts
