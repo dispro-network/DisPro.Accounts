@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dispro.accounts
-          image: dispro/dispro.accounts:$COMMIT_SHA1
+          image: dispro/dispro-accounts:$COMMIT_SHA1
           ports:
             - containerPort: 80
               name: http
