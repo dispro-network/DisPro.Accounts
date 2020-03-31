@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: DisPro.Accounts
+  name: dispro.accounts
   namespace: default
   labels:
-    app: DisPro.Accounts
+    app: dispro.accounts
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: DisPro.Accounts
+      app: dispro.accounts
   template:
     metadata:
       labels:
-        app: DisPro.Accounts
+        app: dispro.accounts
     spec:
       containers:
-        - name: DisPro.Accounts
-          image: dispro/DisPro.Accounts:$COMMIT_SHA1
+        - name: dispro.accounts
+          image: dispro/dispro.accounts:$COMMIT_SHA1
           ports:
             - containerPort: 80
               name: http
