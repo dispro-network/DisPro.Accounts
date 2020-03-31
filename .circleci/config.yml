@@ -37,6 +37,7 @@ workflows:
   build-dev:
     jobs:
       - build:
+          context: default
           filters:
             branches:
               only: dev
