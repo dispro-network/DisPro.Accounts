@@ -52,6 +52,7 @@ namespace DisPro.Accounts
 
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
+            var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables()
@@ -68,20 +69,21 @@ namespace DisPro.Accounts
             return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseKestrel(options =>
+                    if (isDevelopment)
                     {
-                        options.Listen(IPAddress.Loopback, 5000); // This port is required for https redirection
-                        options.Listen(IPAddress.Loopback, 5001, listenOptions =>
+                        webBuilder.UseKestrel(options =>
                         {
-#if DEBUG
+                            options.Listen(IPAddress.Loopback, 5000); // This port is required for https redirection
+                            options.Listen(IPAddress.Loopback, 5001, listenOptions =>
+                                {
 #pragma warning disable IDE0067 // Dispose objects before losing scope. If disposed here, application will fail
-                            var certificate = new X509Certificate2(certificateFile, certificatePassword);
+                                    var certificate = new X509Certificate2(certificateFile, certificatePassword);
 #pragma warning restore IDE0067 // Dispose objects before losing scope. If disposed here, application will fail
-                            listenOptions.UseHttps(certificate);
-#endif
-
+                                    listenOptions.UseHttps(certificate);
+                                });
                         });
-                    });
+                    }
+
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseSerilog((context, configuration) =>
                     {
