@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using DisPro.Accounts.Data;
 using DisPro.Accounts.Models;
 using DisPro.Accounts.Services;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DisPro.Accounts
 {
@@ -79,7 +80,18 @@ namespace DisPro.Accounts
             }
             else
             {
-                throw new Exception("need to configure key material");
+                try
+                {
+                    builder.AddDeveloperSigningCredential();
+                    // X509Certificate2 cert = new X509Certificate2()
+                    // builder.AddSigningCredential()
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Failed creating IdentityServer SigningCredentials");
+                    Console.WriteLine(e);
+                }
+
             }
 
         }
