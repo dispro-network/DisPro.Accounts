@@ -31,7 +31,18 @@ namespace DisPro.Accounts
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            Console.WriteLine("RootPath: ", Environment.ContentRootPath);
+            var secretConfigBuilder = new ConfigurationBuilder()
+            .SetBasePath(Environment.ContentRootPath)
+            .AddJsonFile("secrets/appsettings.secrets.json", optional: true);
+            var secretConfig = secretConfigBuilder.Build();
+            string connectionString = null;
+            if (Environment.IsDevelopment())
+                connectionString = Configuration.GetConnectionString("DefaultConnection");
+            else
+                connectionString = secretConfig.GetConnectionString("DefaultConnection");
+
+
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
             services.AddTransient<IEmailSender, EmailSender>();
