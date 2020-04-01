@@ -27,5 +27,9 @@ spec:
               readOnly: true
       volumes:
         - name: secrets
-          secret:
-            secretName: secret-appsettings
+          projected:
+            sources:
+              - secret:
+                  name: secret-appsettings
+              - secret:
+                  name: secret-identityserver-cert

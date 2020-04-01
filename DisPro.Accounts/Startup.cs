@@ -93,9 +93,13 @@ namespace DisPro.Accounts
             {
                 try
                 {
-                    builder.AddDeveloperSigningCredential();
-                    // X509Certificate2 cert = new X509Certificate2()
-                    // builder.AddSigningCredential()
+                    //builder.AddDeveloperSigningCredential();
+                    var certificateSettings = secretConfig.GetSection("CertificateSettings");
+                    string certFileName = certificateSettings.GetValue<string>("Filename");
+                    string certPassword = certificateSettings.GetValue<string>("Password");
+                    string certFilePath = Environment.ContentRootPath + "/secrets/" + certFileName;
+                    X509Certificate2 cert = new X509Certificate2(certFilePath);
+                    builder.AddSigningCredential(cert);
                 }
                 catch (Exception e)
                 {
