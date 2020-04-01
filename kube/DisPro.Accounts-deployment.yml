@@ -21,6 +21,9 @@ spec:
           ports:
             - containerPort: 80
               name: http
+          env:
+            - name: "ASPNETCORE_ENVIRONMENT"
+              value: "Development"
           volumeMounts:
             - name: secrets
               mountPath: /app/secrets
