@@ -5,6 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
+                docker build -t 'dispro/dispro-accounts' -f './DisPro.Accounts/Dockerfile' .
             }
         }
         stage('Test') {
