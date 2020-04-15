@@ -15,7 +15,7 @@ mv ./kube/DisPro.Accounts-deployment.yml.out ./kube/DisPro.Accounts-deployment.y
 
 echo "$KUBERNETES_CLUSTER_CERTIFICATE" | base64 --decode > cert.crt
 
-./kubectl \
+kubectl \
   --kubeconfig=/dev/null \
   --server=$KUBERNETES_SERVER \
   --certificate-authority=cert.crt \
