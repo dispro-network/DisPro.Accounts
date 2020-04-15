@@ -5,7 +5,7 @@ pipeline {
         KUBERNETES_SERVER                   = credentials('KUBERNETES_SERVER')
         KUBERNETES_CLUSTER_CERTIFICATE      = credentials('KUBERNETES_CLUSTER_CERTIFICATE')
         KUBERNETES_TOKEN                    = credentials('KUBERNETES_TOKEN')
-        DOCKER_CREDS                        = credentials('DOCKER_CREDS')
+        DOCKER_CREDS                        = credentials('docker-credentials')
         IMAGE_NAME                          = 'dispro/dispro.accounts'
     }
 
