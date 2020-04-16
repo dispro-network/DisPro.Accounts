@@ -34,6 +34,6 @@ REM Copy pfx files into projects
 ECHO Copying pfx files into the DisPro.Accounts
 
 REM DisPro.Accounts
-xcopy /vy ..\certificates\dispro.network.local.pfx ..\DisPro.Accounts\
+xcopy /vy ..\certificates\dispro.network.local.pfx ..\..\DisPro.Accounts\
 
 PAUSE
