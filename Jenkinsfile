@@ -30,6 +30,12 @@ pipeline {
                 echo 'Testing..'
             }
         }
+        stage('Migrate Databases'){
+            steps {
+                echo 'Migrating databases...'
+                sh "docker run $IMAGE_NAME:$BUILD_NUMBER --seed"
+            }
+        }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
