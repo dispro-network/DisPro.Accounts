@@ -28,7 +28,7 @@ if '%errorlevel%' NEQ '0' (
 :--------------------------------------
 
 ECHO Calling CreateSSLCertificate
-powershell -File CreateSSLCertificate.ps1
+powershell -ExecutionPolicy Bypass -File CreateSSLCertificate.ps1
 
 REM Copy pfx files into projects
 ECHO Copying pfx files into the DisPro.Accounts
