@@ -1,12 +1,21 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
-namespace DisPro.Accounts
+namespace DisPro.Accounts.Migrations.SeedData
 {
-    public static class Config
+    public class IdentityServerSeedDatacs
     {
-        public static IEnumerable<IdentityResource> GetIdentityResources()
+        private readonly IConfiguration _config;
+        public IdentityServerSeedDatacs(IConfiguration config)
+        {
+            _config = config;
+        }
+
+        public IEnumerable<IdentityResource> GetIdentityResources()
         {
             return new List<IdentityResource>
             {
@@ -15,8 +24,14 @@ namespace DisPro.Accounts
             };
         }
 
-        public static IEnumerable<ApiResource> GetApis()
+        public IEnumerable<ApiResource> GetApis()
         {
+            var secretConfigBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("secrets/appsettings.secrets.json", optional: false);
+            var secretConfig = secretConfigBuilder.Build();
+            var apiSecrectsSection = secretConfig.GetSection("IdentityServer").GetSection("ApiSecrets");
+
             return new List<ApiResource>
             {
                 new ApiResource
@@ -24,13 +39,14 @@ namespace DisPro.Accounts
                     Name="default-api",
                     DisplayName="Default API",
                     Scopes = { new Scope("default-scope", "Default Scope")},
-                    ApiSecrets = {new Secret("secret".Sha256())}
+                    ApiSecrets = {new Secret(apiSecrectsSection.GetValue<string>("default-api").Sha256())}
                 }
             };
         }
 
-        public static IEnumerable<Client> GetClients()
+        public IEnumerable<Client> GetClients()
         {
+            var baseUrl = _config.GetValue<string>("BaseUrl");
             return new List<Client>
             {
                 new Client
@@ -43,9 +59,9 @@ namespace DisPro.Accounts
                     RequireClientSecret = false,
                     RequireConsent = false,
 
-                    RedirectUris =           { "https://dispro.network.local:5005/callback" },
-                    PostLogoutRedirectUris = { "https://dispro.network.local:5005/" },
-                    AllowedCorsOrigins =     { "https://dispro.network.local:5005" },
+                    RedirectUris =           { baseUrl + "/callback" },
+                    PostLogoutRedirectUris = { baseUrl + "/" },
+                    AllowedCorsOrigins =     { baseUrl },
 
                     AllowedScopes =
                     {

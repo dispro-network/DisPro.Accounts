@@ -14,13 +14,14 @@ using DisPro.Accounts.Data;
 using DisPro.Accounts.Models;
 using DisPro.Accounts.Services;
 using System.Security.Cryptography.X509Certificates;
-using System.Security;
+using DisPro.Accounts.Migrations;
+using DisPro.Accounts.Migrations.SeedData;
 
 namespace DisPro.Accounts
 {
-    public class Startup
+    public class MigratorStartup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        public MigratorStartup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
             Environment = environment;
@@ -32,13 +33,15 @@ namespace DisPro.Accounts
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
 
-            services.AddTransient<IEmailSender, EmailSender>();
-            services.AddRazorPages();
+            // Add DI services
+            services.AddTransient<Migrator>();
+            services.AddTransient<IdentityServerSeedDatacs>();
+            services.AddTransient<UserSeedData>();
 
             // Block 1: Add ASP.NET Identity
             services.AddEntityFrameworkNpgsql().
@@ -51,8 +54,6 @@ namespace DisPro.Accounts
             // Block 2: Add IdentityServer4
             var builder = services.AddIdentityServer(options =>
             {
-                options.UserInteraction.ErrorUrl = "/Error";
-
                 options.Events.RaiseErrorEvents = true;
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
@@ -73,72 +74,12 @@ namespace DisPro.Accounts
                             pgsql => pgsql.MigrationsAssembly(migrationsAssembly));
                 })
                 .AddAspNetIdentity<ApplicationUser>();
-
-            if (Environment.IsDevelopment())
-            {
-                // Block 3:
-                // Adding Developer Signing Credential, This will generate tempkey.rsa file 
-                // In Production you need to provide the asymmetric key pair (certificate or rsa key) that support RSA with SHA256.
-                builder.AddDeveloperSigningCredential();
-            }
-            else
-            {
-                try
-                {
-                    var certificateSettings = Configuration.GetSection("CertificateSettings");
-                    string certFileName = certificateSettings.GetValue<string>("Filename");
-                    string certPassword = certificateSettings.GetValue<string>("Password");
-                    string certFilePath = Environment.ContentRootPath + "/secrets/" + certFileName;
-                    X509Certificate2 cert = new X509Certificate2(certFilePath, certPassword);
-                    builder.AddSigningCredential(cert);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Failed creating IdentityServer SigningCredentials");
-                    throw;
-                }
-
-            }
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            if (Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
 
-            app.Use(async (context, next) =>
-            {
-                context.Response.Headers.Add(
-                    "Content-Security-Policy",
-                    "frame-src https://*.dispro.network.local:*");
-                await next();
-            });
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseIdentityServer();
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-            });
         }
     }
 }

@@ -7,6 +7,8 @@ pipeline {
         KUBERNETES_TOKEN                    = credentials('KUBERNETES_TOKEN')
         DOCKER_CREDS                        = credentials('docker-credentials')
         IMAGE_NAME                          = 'dispro/dispro.accounts'
+        IMAGE_TAG                           = "$GIT_BRANCH-$BUILD_NUMBER"
+        SECRETS_VOL                         = "$GIT_BRANCH-secrets"
     }
 
     stages {
@@ -20,9 +22,9 @@ pipeline {
             steps {
                 echo 'Pushing docker image...'
                 sh "./Scripts/docker-login.sh"
-                sh "docker tag $IMAGE_NAME:latest $IMAGE_NAME:$BUILD_NUMBER"
+                sh "docker tag $IMAGE_NAME:latest $IMAGE_NAME:$IMAGE_TAG"
                 sh "docker push $IMAGE_NAME:latest"
-                sh "docker push $IMAGE_NAME:$BUILD_NUMBER"
+                sh "docker push $IMAGE_NAME:$IMAGE_TAG"
             }
         }
         stage('Test') {
@@ -33,7 +35,25 @@ pipeline {
         stage('Migrate Databases'){
             steps {
                 echo 'Migrating databases...'
-                sh "docker run $IMAGE_NAME:$BUILD_NUMBER --seed"
+                withCredentials([file(credentialsId: 'DisPro.Accounts_Migrator', variable: 'FILE')]) {
+                    dir('secrets') {
+                        script {
+                            try {
+                                sh "docker volume create $SECRETS_VOL"
+                                sh "cat $FILE |  docker run -i --rm -v=$SECRETS_VOL:/tmp/secrets ubuntu /bin/bash -c 'cat > /tmp/secrets/appsettings.secrets.json'"
+                                // First destroy database (DevelopmentServer env only)
+                                sh "docker run --rm -e ASPNETCORE_ENVIRONMENT=DevelopmentServer --mount type=volume,source=$SECRETS_VOL,target=/app/secrets $IMAGE_NAME:$IMAGE_TAG destroy"
+                                sh "docker run --rm -e ASPNETCORE_ENVIRONMENT=DevelopmentServer --mount type=volume,source=$SECRETS_VOL,target=/app/secrets $IMAGE_NAME:$IMAGE_TAG migrate"
+                            }
+                            catch (ex) {
+                                error('Aborting')
+                            }
+                            finally {
+                                sh "docker volume rm -f $SECRETS_VOL"
+                            }
+                        }
+                    }
+                }
             }
         }
         stage('Deploy') {

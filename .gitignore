@@ -362,3 +362,5 @@ certificates/
 # Development appsettings
 *.Development.json
 
+DisPro.Accounts/secrets/
+DisPro.Accounts/Properties/launchSettings.json

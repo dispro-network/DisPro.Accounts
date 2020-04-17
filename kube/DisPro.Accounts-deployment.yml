@@ -18,6 +18,7 @@ spec:
       containers:
         - name: dispro-accounts
           image: dispro/dispro.accounts:$COMMIT_SHA1
+          args: ["run"]
           ports:
             - containerPort: 80
               name: http
@@ -29,10 +30,6 @@ spec:
               mountPath: /app/secrets
               readOnly: true
       volumes:
-        - name: secrets
-          projected:
-            sources:
-              - secret:
-                  name: secret-appsettings
-              - secret:
-                  name: secret-identityserver-cert
+      - name: secrets
+        secret:
+              secretName: dev-dispro.accounts

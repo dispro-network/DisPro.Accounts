@@ -2,7 +2,7 @@
 # exit script when any command ran here returns with non-zero exit code
 set -e
 
-COMMIT_SHA1=$BUILD_NUMBER
+COMMIT_SHA1=$GIT_BRANCH-$BUILD_NUMBER
 
 # We must export it so it's available for envsubst
 export COMMIT_SHA1=$COMMIT_SHA1
